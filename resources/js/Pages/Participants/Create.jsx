@@ -66,26 +66,16 @@ export default function Create() {
     const submit = (e) => {
         e.preventDefault();
 
-        // Convertir los archivos a FormData para el envo
-        const formData = new FormData();
+        // Filtrar enlaces vacíos y convertir a JSON
+        const validLinks = data.support_links.filter(link => link.trim() !== '');
 
-        // Agregar todos los campos excepto archivos
-        Object.keys(data).forEach(key => {
-            if (key === 'complementary_files' || key === 'photos') {
-                // Agregar archivos
-                data[key].forEach((file, index) => {
-                    formData.append(`${key}[]`, file);
-                });
-            } else if (key === 'support_links') {
-                // Convertir array de links a JSON
-                formData.append(key, JSON.stringify(data[key].filter(link => link.trim() !== '')));
-            } else {
-                formData.append(key, data[key] || '');
-            }
-        });
+        // Crear los datos finales
+        const submissionData = {
+            ...data,
+            support_links: validLinks.length > 0 ? validLinks : null,
+        };
 
-        post(route('participants.store'), {
-            data: formData,
+        post(route('participants.store'), submissionData, {
             forceFormData: true,
         });
     };
@@ -101,7 +91,7 @@ export default function Create() {
                         <Link href="/">
                             <ApplicationLogo className="h-12 w-12 fill-current text-gray-500" />
                         </Link>
-                        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                        <h1 className="text-3xl font-bold tracking-tight text-blue-900">
                             Premios ANPR
                         </h1>
                     </div>
@@ -117,10 +107,10 @@ export default function Create() {
                             </h2>
 
                             <form onSubmit={submit} className="space-y-8">
-                                {/* SECCIN 1: Informacin General */}
+                                {/* SECCIN 1: Información General */}
                                 <div className="rounded-lg border border-gray-200 p-6">
                                     <h3 className="mb-4 text-lg font-semibold text-gray-800">
-                                        1. Informacin General
+                                        1. Información General
                                     </h3>
 
                                     <div className="space-y-4">
@@ -138,7 +128,7 @@ export default function Create() {
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="category" value="Categora *" />
+                                            <InputLabel htmlFor="category" value="Categoría *" />
                                             <SelectInput
                                                 id="category"
                                                 value={data.category}
@@ -146,23 +136,23 @@ export default function Create() {
                                                 onChange={(e) => setData('category', e.target.value)}
                                                 required
                                             >
-                                                <option value="">Seleccione una categora</option>
-                                                <option value="comunicacion_interna">Comunicacin Interna</option>
-                                                <option value="comunicacion_externa">Comunicacin Externa</option>
-                                                <option value="comunicacion_digital">Comunicacin Digital</option>
-                                                <option value="gestion_crisis">Gestin de Crisis</option>
-                                                <option value="responsabilidad_social">Responsabilidad Social</option>
-                                                <option value="innovacion">Innovacin</option>
+                                                <option value="">Seleccione una categoría</option>
+                                                <option value="comunicacion_interna">Premio Semilla</option>
+                                                <option value="comunicacion_externa">Premio Líder</option>
+                                                <option value="comunicacion_digital">Activación Social, Educativa y Cultural</option>
+                                                <option value="gestion_crisis">Medio Ambiente y Resiliencia Urbana</option>
+                                                <option value="responsabilidad_social">Diseño de Espacios Públicos y Playgrounds</option>
+                                                <option value="innovacion">Innovación y Tecnología para Parques</option>
                                             </SelectInput>
                                             <InputError message={errors.category} className="mt-2" />
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* SECCIN 2: Informacin del Participante */}
+                                {/* SECCIN 2: Información del Participante */}
                                 <div className="rounded-lg border border-gray-200 p-6">
                                     <h3 className="mb-4 text-lg font-semibold text-gray-800">
-                                        2. Informacin del Participante o Representante
+                                        2. Información del Participante o Representante
                                     </h3>
 
                                     <div className="space-y-4">
@@ -190,7 +180,7 @@ export default function Create() {
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="organization" value="Organizacin" />
+                                            <InputLabel htmlFor="organization" value="Organización" />
                                             <TextInput
                                                 id="organization"
                                                 value={data.organization}
@@ -201,12 +191,12 @@ export default function Create() {
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="city_country" value="Ciudad, Pas" />
+                                            <InputLabel htmlFor="city_country" value="Ciudad, País" />
                                             <TextInput
                                                 id="city_country"
                                                 value={data.city_country}
                                                 className="mt-1 block w-full"
-                                                placeholder="ej: Ciudad de Mxico, Mxico"
+                                                placeholder="ej: Ciudad de México, México"
                                                 onChange={(e) => setData('city_country', e.target.value)}
                                             />
                                             <InputError message={errors.city_country} className="mt-2" />
@@ -226,7 +216,7 @@ export default function Create() {
                                             </div>
 
                                             <div>
-                                                <InputLabel htmlFor="phone" value="Telfono" />
+                                                <InputLabel htmlFor="phone" value="Teléfono" />
                                                 <TextInput
                                                     id="phone"
                                                     type="tel"
@@ -256,12 +246,12 @@ export default function Create() {
                                 {/* SECCIN 3: Descripcin del Proyecto */}
                                 <div className="rounded-lg border border-gray-200 p-6">
                                     <h3 className="mb-4 text-lg font-semibold text-gray-800">
-                                        3. Descripcin del Proyecto
+                                        3. Descripción del Proyecto
                                     </h3>
 
                                     <div className="space-y-4">
                                         <div>
-                                            <InputLabel htmlFor="project_title" value="Ttulo del Proyecto *" />
+                                            <InputLabel htmlFor="project_title" value="Título del Proyecto *" />
                                             <TextInput
                                                 id="project_title"
                                                 value={data.project_title}
@@ -273,7 +263,7 @@ export default function Create() {
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="project_description" value="Descripcin del Proyecto" />
+                                            <InputLabel htmlFor="project_description" value="Descripción del Proyecto" />
                                             <Textarea
                                                 id="project_description"
                                                 value={data.project_description}
@@ -292,20 +282,20 @@ export default function Create() {
                                                 value={data.project_results}
                                                 className="mt-1 block w-full"
                                                 rows="4"
-                                                placeholder="Describe los resultados, impacto y mtricas relevantes..."
+                                                placeholder="Describe los resultados, impacto y métricas relevantes..."
                                                 onChange={(e) => setData('project_results', e.target.value)}
                                             />
                                             <InputError message={errors.project_results} className="mt-2" />
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="project_uniqueness" value="Qu hace nico a este proyecto?" />
+                                            <InputLabel htmlFor="project_uniqueness" value="Qué hace único a este proyecto?" />
                                             <Textarea
                                                 id="project_uniqueness"
                                                 value={data.project_uniqueness}
                                                 className="mt-1 block w-full"
                                                 rows="4"
-                                                placeholder="Explica qu diferencia a este proyecto de otros similares..."
+                                                placeholder="Explica qué diferencia a este proyecto de otros similares..."
                                                 onChange={(e) => setData('project_uniqueness', e.target.value)}
                                             />
                                             <InputError message={errors.project_uniqueness} className="mt-2" />
@@ -383,9 +373,9 @@ export default function Create() {
 
                                         {/* Fotos */}
                                         <div>
-                                            <InputLabel htmlFor="photos" value="Fotografas" />
+                                            <InputLabel htmlFor="photos" value="Fotografías" />
                                             <p className="mt-1 text-sm text-gray-600">
-                                                Imgenes relacionadas con el proyecto
+                                                Imágenes relacionadas con el proyecto
                                             </p>
                                             <input
                                                 id="photos"
@@ -437,7 +427,7 @@ export default function Create() {
                                         </div>
 
                                         <div>
-                                            <InputLabel htmlFor="reference_organization" value="Organizacin de la Referencia" />
+                                            <InputLabel htmlFor="reference_organization" value="Organización de la Referencia" />
                                             <TextInput
                                                 id="reference_organization"
                                                 value={data.reference_organization}
@@ -464,7 +454,7 @@ export default function Create() {
                                 {/* Botn de envo */}
                                 <div className="flex items-center justify-end border-t border-gray-200 pt-6">
                                     <PrimaryButton disabled={processing}>
-                                        {processing ? 'Enviando...' : 'Registrar Participacin'}
+                                        {processing ? 'Enviando...' : 'Registrar Participación'}
                                     </PrimaryButton>
                                 </div>
                             </form>

@@ -56,7 +56,8 @@ class ParticipantController extends Controller
             'project_uniqueness' => 'nullable|string',
 
             // Material de apoyo
-            'support_links' => 'nullable|json',
+            'support_links' => 'nullable|array',
+            'support_links.*' => 'nullable|url',
             'complementary_files.*' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx|max:10240',
             'photos.*' => 'nullable|image|max:5120',
 
@@ -91,11 +92,6 @@ class ParticipantController extends Controller
                     'size' => $photo->getSize(),
                 ];
             }
-        }
-
-        // Decodificar support_links si viene como JSON string
-        if (isset($validated['support_links']) && is_string($validated['support_links'])) {
-            $validated['support_links'] = json_decode($validated['support_links'], true);
         }
 
         // Crear el participante
@@ -155,7 +151,8 @@ class ParticipantController extends Controller
             'project_uniqueness' => 'nullable|string',
 
             // Material de apoyo
-            'support_links' => 'nullable|json',
+            'support_links' => 'nullable|array',
+            'support_links.*' => 'nullable|url',
 
             // Referencia o contacto
             'reference_name' => 'nullable|string|max:255',

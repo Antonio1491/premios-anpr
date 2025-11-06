@@ -95,14 +95,14 @@ class ParticipantController extends Controller
         }
 
         // Crear el participante
-        $participant = Participant::create([
+        Participant::create([
             ...$validated,
             'complementary_files' => $complementaryFiles,
             'photos' => $photos,
         ]);
 
-        return redirect()->route('participants.show', $participant)
-            ->with('success', 'Registro enviado exitosamente.');
+        return redirect()->route('participants.create')
+            ->with('success', 'Registro enviado exitosamente. Gracias por participar en los Premios ANPR.');
     }
 
     /**

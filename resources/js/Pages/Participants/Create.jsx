@@ -6,10 +6,11 @@ import TextInput from '@/Components/TextInput';
 import Textarea from '@/Components/Textarea';
 import SelectInput from '@/Components/SelectInput';
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
 export default function Create() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { flash } = usePage().props;
+    const { data, setData, post, processing, errors, reset } = useForm({
         // Informacin general
         email: '',
         category: '',
@@ -77,6 +78,10 @@ export default function Create() {
 
         post(route('participants.store'), submissionData, {
             forceFormData: true,
+            onSuccess: () => {
+                reset();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
         });
     };
 
@@ -100,6 +105,22 @@ export default function Create() {
 
             <div className="py-12">
                 <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+                    {/* Mensaje de éxito */}
+                    {flash?.success && (
+                        <div className="mb-6 rounded-lg bg-green-50 border border-green-200 p-4">
+                            <div className="flex items-center">
+                                <svg className="h-5 w-5 text-green-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium text-green-800">
+                                        {flash.success}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             <h2 className="mb-6 text-2xl font-bold">

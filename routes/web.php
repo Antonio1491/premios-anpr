@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -25,3 +26,17 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Rutas públicas para registro de participantes
+Route::get('/participants/create', [ParticipantController::class, 'create'])->name('participants.create');
+Route::post('/participants', [ParticipantController::class, 'store'])->name('participants.store');
+Route::get('/participants/{participant}', [ParticipantController::class, 'show'])->name('participants.show');
+
+// Rutas protegidas para gestión de participantes (solo administradores)
+Route::middleware('auth')->group(function () {
+    Route::get('/participants', [ParticipantController::class, 'index'])->name('participants.index');
+    Route::get('/participants/{participant}/edit', [ParticipantController::class, 'edit'])->name('participants.edit');
+    Route::patch('/participants/{participant}', [ParticipantController::class, 'update'])->name('participants.update');
+    Route::delete('/participants/{participant}', [ParticipantController::class, 'destroy'])->name('participants.destroy');
+});
+

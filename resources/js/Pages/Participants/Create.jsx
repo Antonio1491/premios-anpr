@@ -137,12 +137,12 @@ export default function Create() {
                                                 required
                                             >
                                                 <option value="">Seleccione una categoría</option>
-                                                <option value="comunicacion_interna">Premio Semilla</option>
-                                                <option value="comunicacion_externa">Premio Líder</option>
-                                                <option value="comunicacion_digital">Activación Social, Educativa y Cultural</option>
-                                                <option value="gestion_crisis">Medio Ambiente y Resiliencia Urbana</option>
-                                                <option value="responsabilidad_social">Diseño de Espacios Públicos y Playgrounds</option>
-                                                <option value="innovacion">Innovación y Tecnología para Parques</option>
+                                                <option value="Premio Semilla">Premio Semilla</option>
+                                                <option value="Premio Líder">Premio Líder</option>
+                                                <option value="Activación Social, Educativa y Cultural">Activación Social, Educativa y Cultural</option>
+                                                <option value="Medio Ambiente y Resiliencia Urbana">Medio Ambiente y Resiliencia Urbana</option>
+                                                <option value="Diseño de Espacios Públicos y Playgrounds">Diseño de Espacios Públicos y Playgrounds</option>
+                                                <option value="Innovación y Tecnología para Parques">Innovación y Tecnología para Parques</option>
                                             </SelectInput>
                                             <InputError message={errors.category} className="mt-2" />
                                         </div>

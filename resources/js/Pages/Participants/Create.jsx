@@ -7,6 +7,7 @@ import Textarea from '@/Components/Textarea';
 import SelectInput from '@/Components/SelectInput';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function Create() {
     const { flash } = usePage().props;
@@ -42,6 +43,11 @@ export default function Create() {
         reference_email: '',
     });
 
+    const [fileErrors, setFileErrors] = useState({
+        complementary_files: '',
+        photos: ''
+    });
+
     const addSupportLink = () => {
         setData('support_links', [...data.support_links, '']);
     };
@@ -60,8 +66,29 @@ export default function Create() {
     const handleFileChange = (e, fieldName) => {
         if (e.target.files) {
             const files = Array.from(e.target.files);
+            const maxFiles = 5;
+
+            // Limpiar error previo
+            setFileErrors(prev => ({ ...prev, [fieldName]: '' }));
+
+            // Validar cantidad de archivos
+            if (files.length > maxFiles) {
+                setFileErrors(prev => ({
+                    ...prev,
+                    [fieldName]: `Máximo ${maxFiles} archivos permitidos. Has seleccionado ${files.length}.`
+                }));
+                e.target.value = ''; // Limpiar input
+                return;
+            }
+
             setData(fieldName, files);
         }
+    };
+
+    const removeFile = (fieldName, index) => {
+        const newFiles = data[fieldName].filter((_, i) => i !== index);
+        setData(fieldName, newFiles);
+        setFileErrors(prev => ({ ...prev, [fieldName]: '' }));
     };
 
     const submit = (e) => {
@@ -370,7 +397,7 @@ export default function Create() {
 
                                         {/* Archivos complementarios */}
                                         <div>
-                                            <InputLabel htmlFor="complementary_files" value="Archivos Complementarios" />
+                                            <InputLabel htmlFor="complementary_files" value="Archivos Complementarios (Máximo 5)" />
                                             <p className="mt-1 text-sm text-gray-600">
                                                 Documentos, presentaciones, PDFs, etc.
                                             </p>
@@ -387,14 +414,49 @@ export default function Create() {
                                                 accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
                                             />
                                             <p className="mt-1 text-xs text-gray-500">
-                                                Formatos permitidos: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX
+                                                Formatos permitidos: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX (Máximo 10MB por archivo)
                                             </p>
+
+                                            {/* Mostrar archivos seleccionados */}
+                                            {data.complementary_files.length > 0 && (
+                                                <div className="mt-3 space-y-2">
+                                                    <p className="text-sm font-medium text-gray-700">
+                                                        Archivos seleccionados ({data.complementary_files.length}/5):
+                                                    </p>
+                                                    {data.complementary_files.map((file, index) => (
+                                                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200">
+                                                            <div className="flex items-center min-w-0 flex-1">
+                                                                <svg className="w-4 h-4 text-gray-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fillRule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clipRule="evenodd" />
+                                                                </svg>
+                                                                <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                                                                <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
+                                                                    ({(file.size / 1024).toFixed(2)} KB)
+                                                                </span>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeFile('complementary_files', index)}
+                                                                className="ml-2 text-red-600 hover:text-red-800 flex-shrink-0"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {fileErrors.complementary_files && (
+                                                <p className="mt-2 text-sm text-red-600">{fileErrors.complementary_files}</p>
+                                            )}
                                             <InputError message={errors.complementary_files} className="mt-2" />
                                         </div>
 
                                         {/* Fotos */}
                                         <div>
-                                            <InputLabel htmlFor="photos" value="Fotografías" />
+                                            <InputLabel htmlFor="photos" value="Fotografías (Máximo 5)" />
                                             <p className="mt-1 text-sm text-gray-600">
                                                 Imágenes relacionadas con el proyecto
                                             </p>
@@ -411,8 +473,43 @@ export default function Create() {
                                                 accept="image/*"
                                             />
                                             <p className="mt-1 text-xs text-gray-500">
-                                                Formatos permitidos: JPG, PNG, GIF, etc.
+                                                Formatos permitidos: JPG, PNG, GIF, etc. (Máximo 5MB por imagen)
                                             </p>
+
+                                            {/* Mostrar fotos seleccionadas */}
+                                            {data.photos.length > 0 && (
+                                                <div className="mt-3 space-y-2">
+                                                    <p className="text-sm font-medium text-gray-700">
+                                                        Fotografías seleccionadas ({data.photos.length}/5):
+                                                    </p>
+                                                    {data.photos.map((file, index) => (
+                                                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200">
+                                                            <div className="flex items-center min-w-0 flex-1">
+                                                                <svg className="w-4 h-4 text-gray-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                                                </svg>
+                                                                <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                                                                <span className="text-xs text-gray-500 ml-2 flex-shrink-0">
+                                                                    ({(file.size / 1024).toFixed(2)} KB)
+                                                                </span>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeFile('photos', index)}
+                                                                className="ml-2 text-red-600 hover:text-red-800 flex-shrink-0"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {fileErrors.photos && (
+                                                <p className="mt-2 text-sm text-red-600">{fileErrors.photos}</p>
+                                            )}
                                             <InputError message={errors.photos} className="mt-2" />
                                         </div>
                                     </div>

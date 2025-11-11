@@ -35,9 +35,6 @@ export default function Dashboard({ participants }) {
                                                 Proyecto
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Organización
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Fecha
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -62,30 +59,21 @@ export default function Dashboard({ participants }) {
                                                         {participant.project_title}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                        {participant.organization || 'N/A'}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                         {new Date(participant.created_at).toLocaleDateString()}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                         <Link
                                                             href={`/participants/${participant.id}`}
-                                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                                            className="text-indigo-600 hover:text-indigo-900"
                                                         >
                                                             Ver
-                                                        </Link>
-                                                        <Link
-                                                            href={`/participants/${participant.id}/edit`}
-                                                            className="text-blue-600 hover:text-blue-900"
-                                                        >
-                                                            Editar
                                                         </Link>
                                                     </td>
                                                 </tr>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
+                                                <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500">
                                                     No hay participantes registrados aún.
                                                 </td>
                                             </tr>

@@ -58,7 +58,9 @@ class ParticipantController extends Controller
             // Material de apoyo
             'support_links' => 'nullable|array',
             'support_links.*' => 'nullable|url',
+            'complementary_files' => 'nullable|array|max:5',
             'complementary_files.*' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx|max:10240',
+            'photos' => 'nullable|array|max:5',
             'photos.*' => 'nullable|image|max:5120',
 
             // Referencia o contacto
